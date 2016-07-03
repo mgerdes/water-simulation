@@ -1,7 +1,9 @@
-#include "objects/rectangle_object.h"
+#include "objects/rectangle.h"
+
+using namespace object3d;
 
 rectangle::rectangle(const vec3 &p1, const vec3 &p2) {
-    float width = 0.04;
+    float width = 0.060;
 
     vec3 corner_points[8];
     vec3 face_normals[6];
@@ -101,50 +103,50 @@ rectangle::rectangle(const vec3 &p1, const vec3 &p2) {
     }
 
 
-    /* Set up vertices for the triangles */
-    vec3 vertices[36];
+    /* Set up positions for the triangles vertices */
+    vec3 positions[36];
     /* Top Face Triangle */
-    vertices[0] = corner_points[0];
-    vertices[1] = corner_points[1];
-    vertices[2] = corner_points[2];
-    vertices[3] = corner_points[1];
-    vertices[4] = corner_points[2];
-    vertices[5] = corner_points[3];
+    positions[0] = corner_points[0];
+    positions[1] = corner_points[1];
+    positions[2] = corner_points[2];
+    positions[3] = corner_points[1];
+    positions[4] = corner_points[2];
+    positions[5] = corner_points[3];
     /* Bottom Face Triangles */
-    vertices[6] = corner_points[4];
-    vertices[7] = corner_points[5];
-    vertices[8] = corner_points[6];
-    vertices[9] = corner_points[5];
-    vertices[10] = corner_points[6];
-    vertices[11] = corner_points[7];
+    positions[6] = corner_points[4];
+    positions[7] = corner_points[5];
+    positions[8] = corner_points[6];
+    positions[9] = corner_points[5];
+    positions[10] = corner_points[6];
+    positions[11] = corner_points[7];
     /* Side 1 Face Triangles */
-    vertices[12] = corner_points[0];
-    vertices[13] = corner_points[4];
-    vertices[14] = corner_points[6];
-    vertices[15] = corner_points[0];
-    vertices[16] = corner_points[2];
-    vertices[17] = corner_points[6];
+    positions[12] = corner_points[0];
+    positions[13] = corner_points[4];
+    positions[14] = corner_points[6];
+    positions[15] = corner_points[0];
+    positions[16] = corner_points[2];
+    positions[17] = corner_points[6];
     /* Side 2 Face Triangles */
-    vertices[18] = corner_points[2];
-    vertices[19] = corner_points[6];
-    vertices[20] = corner_points[7];
-    vertices[21] = corner_points[2];
-    vertices[22] = corner_points[3];
-    vertices[23] = corner_points[7];
+    positions[18] = corner_points[2];
+    positions[19] = corner_points[6];
+    positions[20] = corner_points[7];
+    positions[21] = corner_points[2];
+    positions[22] = corner_points[3];
+    positions[23] = corner_points[7];
     /* Side 3 Face Triangles */
-    vertices[24] = corner_points[3];
-    vertices[25] = corner_points[5];
-    vertices[26] = corner_points[7];
-    vertices[27] = corner_points[1];
-    vertices[28] = corner_points[3];
-    vertices[29] = corner_points[5];
+    positions[24] = corner_points[3];
+    positions[25] = corner_points[5];
+    positions[26] = corner_points[7];
+    positions[27] = corner_points[1];
+    positions[28] = corner_points[3];
+    positions[29] = corner_points[5];
     /* Side 4 Face Triangles */
-    vertices[30] = corner_points[1];
-    vertices[31] = corner_points[4];
-    vertices[32] = corner_points[5];
-    vertices[33] = corner_points[0];
-    vertices[34] = corner_points[1];
-    vertices[35] = corner_points[4];
+    positions[30] = corner_points[1];
+    positions[31] = corner_points[4];
+    positions[32] = corner_points[5];
+    positions[33] = corner_points[0];
+    positions[34] = corner_points[1];
+    positions[35] = corner_points[4];
 
     /* Set up the normals for the triangles */
     vec3 normals[36];
@@ -156,13 +158,13 @@ rectangle::rectangle(const vec3 &p1, const vec3 &p2) {
         }
     }
 
-    /* Set up the vertex and normal floats for OpenGL */
-    GLfloat vertex_floats[36*3];
+    /* Set up the position and normal floats for OpenGL */
+    GLfloat position_floats[36*3];
     GLfloat normal_floats[36*3];
     for (int i = 0; i < 36; i++) {
-        vertex_floats[i*3] = vertices[i].x;
-        vertex_floats[i*3+1] = vertices[i].y;
-        vertex_floats[i*3+2] = vertices[i].z;
+        position_floats[i*3] = positions[i].x;
+        position_floats[i*3+1] = positions[i].y;
+        position_floats[i*3+2] = positions[i].z;
         normal_floats[i*3] = normals[i].x;
         normal_floats[i*3+1] = normals[i].y;
         normal_floats[i*3+2] = normals[i].z;
@@ -171,10 +173,10 @@ rectangle::rectangle(const vec3 &p1, const vec3 &p2) {
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    GLuint vertex_vbo;
-    glGenBuffers(1, &vertex_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_floats), vertex_floats, GL_STATIC_DRAW);
+    GLuint positions_vbo;
+    glGenBuffers(1, &positions_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, positions_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(position_floats), position_floats, GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(0);
 
@@ -185,11 +187,5 @@ rectangle::rectangle(const vec3 &p1, const vec3 &p2) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glEnableVertexAttribArray(1);
 
-    glBindVertexArray(0);
-}
-
-void rectangle::draw() {
-    glBindVertexArray(vao);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 }
