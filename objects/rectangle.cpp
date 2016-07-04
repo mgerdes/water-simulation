@@ -3,7 +3,7 @@
 using namespace object3d;
 
 rectangle::rectangle(const vec3 &p1, const vec3 &p2) {
-    float width = 0.060;
+    float width = 0.05;
 
     vec3 corner_points[8];
     vec3 face_normals[6];

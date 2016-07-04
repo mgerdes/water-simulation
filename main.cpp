@@ -9,6 +9,7 @@
 #include "maths/maths.h"
 #include "objects/rectangle.h"
 #include "objects/water.h"
+#include "objects/bezier_surface.h"
 #include "shaders/shader.h"
 
 int main() {
@@ -25,11 +26,31 @@ int main() {
 
     object3d::water water;
 
+    vec3 control_points[4][4] = 
+    {
+        {vec3(0, 0, 0), vec3(1, 0, 0), vec3(2, 0, 0), vec3(3, 0, 0)},
+        {vec3(0, 1, 1), vec3(1, 1, -1), vec3(2, 1, 1), vec3(3, 1, -1)},
+        {vec3(0, 2, 1), vec3(1, 2, -1), vec3(2, 2, 1), vec3(3, 2, -1)},
+        {vec3(0, 3, 0), vec3(1, 3, 0), vec3(2, 3, 0), vec3(3, 3, 0)},
+    };
+    object3d::bezier_surface surface(control_points);
+
+    float rotation_x = 0.0;
+
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Draw the rectangles
         glUseProgram(shader.program);
+
+        mat4 model_mat = mat4::rotation_x(rotation_x += 0.01) * mat4::scale(vec3(2, 2, 2));
+        glUniformMatrix4fv(shader.model_mat_location, 1, GL_TRUE, model_mat.m);
+        glUniformMatrix4fv(shader.view_mat_location, 1, GL_TRUE, view_mat.m);
+        glUniformMatrix4fv(shader.proj_mat_location, 1, GL_TRUE, proj_mat.m);
+
+        glBindVertexArray(surface.vao);
+        //glDrawArrays(GL_TRIANGLES, 0, 2 * (surface.N - 1) * (surface.N - 1) * 3);
+        glBindVertexArray(0);
 
         water.update(1/60.0);
 
