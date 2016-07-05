@@ -7,12 +7,12 @@ namespace object3d {
 
     class water {
         public:
-            const int width = 50, height = 50;
+            static constexpr int width = 60, height = 60;
 
-            float c = 10.0;
-            float u[50][50]; 
-            float u_new[50][50]; 
-            float v[50][50]; 
+            float c = 16.0;
+            float u[width][height]; 
+            float u_new[width][height]; 
+            float v[width][height]; 
 
             water();
 

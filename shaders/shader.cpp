@@ -17,6 +17,7 @@ shader::shader(const char *vertex_shader_file, const char *fragment_shader_file)
     glShaderSource(vertex_shader, 1, &vertex_shader_string, NULL);
     glCompileShader(vertex_shader);
     this->check_for_compile_errors(vertex_shader, "vertex_shader");
+    free(vertex_shader_string);
 
     // Create the fragment shader
     f = fopen(fragment_shader_file, "r");
@@ -32,6 +33,7 @@ shader::shader(const char *vertex_shader_file, const char *fragment_shader_file)
     glShaderSource(fragment_shader, 1, &fragment_shader_string, NULL);
     glCompileShader(fragment_shader);
     this->check_for_compile_errors(fragment_shader, "fragment_shader");
+    free(fragment_shader_string);
 
     // Create the shader program
     this->program = glCreateProgram();
@@ -43,6 +45,7 @@ shader::shader(const char *vertex_shader_file, const char *fragment_shader_file)
     this->model_mat_location = glGetUniformLocation(this->program, "model_mat");
     this->view_mat_location = glGetUniformLocation(this->program, "view_mat");
     this->proj_mat_location = glGetUniformLocation(this->program, "proj_mat");
+
 }
 
 void shader::check_for_compile_errors(GLuint shader, const char *name) {
