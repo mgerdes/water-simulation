@@ -45,7 +45,7 @@ shader::shader(const char *vertex_shader_file, const char *fragment_shader_file)
     this->model_mat_location = glGetUniformLocation(this->program, "model_mat");
     this->view_mat_location = glGetUniformLocation(this->program, "view_mat");
     this->proj_mat_location = glGetUniformLocation(this->program, "proj_mat");
-
+    this->color_location = glGetUniformLocation(this->program, "color");
 }
 
 void shader::check_for_compile_errors(GLuint shader, const char *name) {

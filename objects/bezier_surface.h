@@ -19,7 +19,6 @@ namespace object3d {
             static const int N = 5;
 
             GLuint vao;
-            int num_indices;
 
             vec3 points[N * N];
             vec3 triangle_points[(N-1) * (N-1) * 3 * 2];

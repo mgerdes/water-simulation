@@ -15,7 +15,9 @@ namespace graphics {
             GLuint program, 
                    model_mat_location, 
                    view_mat_location, 
-                   proj_mat_location;
+                   proj_mat_location,
+                   color_location
+                   ;
 
             shader(const char *vertex_shader_file, const char *fragment_shader_file);
     };
