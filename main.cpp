@@ -31,6 +31,14 @@ int main() {
     object3d::plane plane;
 
     GLuint floor_texture = util_create_texture("floor.jpg");
+    GLuint sky_texture = util_create_texture("sky.jpg");
+    
+    GLuint floor_texture_location = glGetUniformLocation(shader.program, "floor_texture"); 
+    GLuint sky_texture_location = glGetUniformLocation(shader.program, "sky_texture"); 
+    glUseProgram(shader.program);
+    glUniform1i(floor_texture_location, 0);
+    glUniform1i(sky_texture_location, 1);
+    glUseProgram(0);
 
     float previous_time = glfwGetTime();
 
@@ -50,6 +58,7 @@ int main() {
         glUniformMatrix4fv(floor_shader.view_mat_location, 1, GL_TRUE, view_mat.m);
         glUniformMatrix4fv(floor_shader.proj_mat_location, 1, GL_TRUE, proj_mat.m);
         glUniformMatrix4fv(floor_shader.model_mat_location, 1, GL_TRUE, model_mat.m);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, floor_texture);
 
         // Draw floor of water
@@ -59,7 +68,8 @@ int main() {
 
         // Set up uniforms for side 1 of water
         model_mat = mat4::translation(vec3(0, -3, -1)) * mat4::scale(vec3(3, 1, 2)) * mat4::rotation_x(M_PI / 2.0);
-        glUniformMatrix4fv(shader.model_mat_location, 1, GL_TRUE, model_mat.m);
+        glUniformMatrix4fv(floor_shader.model_mat_location, 1, GL_TRUE, model_mat.m);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, floor_texture);
 
         // Draw side 1 of water
@@ -69,7 +79,8 @@ int main() {
 
         // Set up uniforms for side 2 of water
         model_mat = mat4::translation(vec3(-3, 0, -1)) * mat4::scale(vec3(1, 3, 2)) * mat4::rotation_y(M_PI / 2.0);
-        glUniformMatrix4fv(shader.model_mat_location, 1, GL_TRUE, model_mat.m);
+        glUniformMatrix4fv(floor_shader.model_mat_location, 1, GL_TRUE, model_mat.m);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, floor_texture);
 
         // Draw side 2 of water
@@ -136,6 +147,10 @@ int main() {
                 glUniformMatrix4fv(shader.view_mat_location, 1, GL_TRUE, view_mat.m);
                 glUniformMatrix4fv(shader.proj_mat_location, 1, GL_TRUE, proj_mat.m);
                 glUniform3f(shader.color_location, 0.527, 0.843, 0.898);
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, floor_texture);
+                glActiveTexture(GL_TEXTURE1);
+                glBindTexture(GL_TEXTURE_2D, sky_texture);
 
                 // Draw the surface
                 glBindVertexArray(surface.vao);

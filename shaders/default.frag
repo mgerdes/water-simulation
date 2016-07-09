@@ -7,41 +7,54 @@ in vec4 vert_color;
 out vec4 frag_color;
 
 uniform sampler2D floor_texture;
+uniform sampler2D sky_texture;
 
 void main () {
     vec3 light_pos_1 = vec3(1.0, 2.0, 3.0);
     vec3 light_pos_2 = vec3(-1.0, -2.0, -3.0);
 
-    float kd = 0.4 * max(dot(normalize(light_pos_1), abs(frag_normal)), 0);
-    kd += 0.4 * max(dot(normalize(light_pos_2), abs(frag_normal)), 0);
+    vec3 normal = frag_normal;
 
-    vec3 refraction = refract(normalize(vec3(5, 5, 5) - frag_position), normalize(frag_normal), 0.6);
+    float kd = 0.3 * max(dot(normalize(light_pos_1), abs(normal)), 0);
+    kd += 0.3 * max(dot(normalize(light_pos_2), abs(normal)), 0);
+
+    vec3 incident = normalize(vec3(5, 5, 5) - frag_position);
+    vec3 refraction = refract(incident, normal, 0.6);
 
     vec3 floor_hit_point = frag_position + refraction * ((-3 - frag_position.z) / refraction.z);
-    vec2 texture_coord = ((floor_hit_point + vec3(3.0, 3.0, 0.0)) / 6.0).xy;
+    vec2 floor_texture_coord = ((floor_hit_point + vec3(3.0, 3.0, 0.0)) / 6.0).xy;
 
-    if (texture_coord.x < 0.0 && texture_coord.y < 0.0) {
-        if (abs(texture_coord.x) < abs(texture_coord.y)) {
-            kd -= 0.1;
+    float floor_kd = kd;
+
+    if (floor_texture_coord.x < 0.0 && floor_texture_coord.y < 0.0) {
+        if (abs(floor_texture_coord.x) < abs(floor_texture_coord.y)) {
+            floor_kd -= 0.10;
             floor_hit_point = frag_position + refraction * ((-3 - frag_position.y) / refraction.y);
-            texture_coord = ((floor_hit_point + vec3(3.0, 0.0, 3.0)) / 6.0).xz;
+            floor_texture_coord = ((floor_hit_point + vec3(3.0, 0.0, 3.0)) / 6.0).xz;
         } else {
-            kd -= 0.18;
+            floor_kd -= 0.15;
             floor_hit_point = frag_position + refraction * ((-3 - frag_position.x) / refraction.x);
-            texture_coord = ((floor_hit_point + vec3(0.0, 3.0, 3.0)) / 6.0).yz;
+            floor_texture_coord = ((floor_hit_point + vec3(0.0, 3.0, 3.0)) / 6.0).yz;
         }
-    } else if (texture_coord.x < 0.0) {
-        kd -= 0.18;
+    } else if (floor_texture_coord.x < 0.0) {
+        floor_kd -= 0.15;
         floor_hit_point = frag_position + refraction * ((-3 - frag_position.x) / refraction.x);
-        texture_coord = ((floor_hit_point + vec3(0.0, 3.0, 3.0)) / 6.0).yz;
+        floor_texture_coord = ((floor_hit_point + vec3(0.0, 3.0, 3.0)) / 6.0).yz;
     }
-    else if (texture_coord.y < 0.0) {
-        kd -= 0.1;
+    else if (floor_texture_coord.y < 0.0) {
+        floor_kd -= 0.10;
         floor_hit_point = frag_position + refraction * ((-3 - frag_position.y) / refraction.y);
-        texture_coord = ((floor_hit_point + vec3(3.0, 0.0, 3.0)) / 6.0).xz;
+        floor_texture_coord = ((floor_hit_point + vec3(3.0, 0.0, 3.0)) / 6.0).xz;
     }
 
-    vec3 texel = texture(floor_texture, texture_coord).xyz;
-    frag_color = vec4(0.3 * vec3(0.527, 0.843, 0.898) + kd * texel, 1.0);
-    //frag_color = vec4(texture_coord, 0.0, 1.0);
+    vec3 reflection = reflect(incident, normal);
+
+    float sky_kd = kd;
+
+    vec3 sky_hit_point = frag_position + reflection * ((3 - frag_position.z) / reflection.z);
+    vec2 sky_texture_coord = ((sky_hit_point + vec3(3.0, 3.0, 0.0)) / 6.0).xy;
+
+    vec3 floor_texel = texture(floor_texture, floor_texture_coord).xyz;
+    vec3 sky_texel = texture(sky_texture, sky_texture_coord).xyz;
+    frag_color = vec4(kd * vec3(0.327, 0.543, 0.998) + floor_kd * 0.5 * floor_texel + sky_kd * 0.5 * sky_texel, 1.0);
 }

@@ -8,7 +8,13 @@ water::water() {
             float x = -3 + 6 * (1 - (i / (float) this->width));
             float y = -3 + 6 * (1 - (j / (float) this->height));
 
-            this->u[i][j] = 0.01 * (3 - fabs(x)) * (3 - fabs(y)) + 0.0;
+            if (x < 0.1 && x > -0.1 && y < 0.1 && y > -0.1) {
+                this->u[i][j] = 1.0;
+            }
+            else {
+                this->u[i][j] = 0;
+            }
+
             //this->u[i][j] = 1.0 * sin(x) * sin(x) * cos(y) + 1.0;
             //this->u[i][j] += 0.2 * (x + y);
             //this->u[i][j] = abs(x) + 1.0;
@@ -55,7 +61,7 @@ void water::update(float dt) {
 
             float f = c * c * ((v1 + v2 + v3 + v4) - 4 * this->u[i][j]); 
             this->v[i][j] += f * dt;
-            //this->v[i][j] *= 0.995;
+            this->v[i][j] *= 0.995;
             this->u_new[i][j] = u[i][j] + v[i][j] * dt;
         }
     }
