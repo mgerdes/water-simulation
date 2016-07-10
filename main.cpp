@@ -154,7 +154,8 @@ int main() {
 
                 // Draw the surface
                 glBindVertexArray(surface.vao);
-                glDrawArrays(GL_TRIANGLES, 0, 2 * (surface.N - 1) * (surface.N - 1) * 3);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, surface.elements_vbo);
+                glDrawElements(GL_TRIANGLES, (surface.N - 1) * (surface.N - 1) * 2 * 3, GL_UNSIGNED_INT, 0);
                 glBindVertexArray(0);
             }
         }

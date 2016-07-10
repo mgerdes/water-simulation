@@ -18,14 +18,15 @@ namespace object3d {
         public:
             static const int N = 5;
 
-            GLuint vao;
+            GLuint vao, elements_vbo;
 
             vec3 points[N * N];
-            vec3 triangle_points[(N-1) * (N-1) * 3 * 2];
-            vec3 triangle_normals[(N-1) * (N-1) * 3 * 2];
+            vec3 normals[N * N];
+            vec3 elements[(N - 1) * (N - 1) * 2];
 
-            float normals_buffer[(N-1) * (N-1) * 3 * 2 * 3];
-            float points_buffer[(N-1) * (N-1) * 3 * 2 * 3];
+            float points_buffer[N * N * 3];
+            float normals_buffer[N * N * 3];
+            int elements_buffer[(N - 1) * (N - 1) * 2 * 3];
 
             float bernstein_results[N][4];
 

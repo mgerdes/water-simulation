@@ -9,13 +9,13 @@ water::water() {
             float y = -3 + 6 * (1 - (j / (float) this->height));
 
             if (x < 0.1 && x > -0.1 && y < 0.1 && y > -0.1) {
-                this->u[i][j] = 1.0;
+                this->u[i][j] = 0.0;
             }
             else {
                 this->u[i][j] = 0;
             }
 
-            //this->u[i][j] = 1.0 * sin(x) * sin(x) * cos(y) + 1.0;
+            //this->u[i][j] = 1.0 * sin(x) * sin(x) * cos(y);
             //this->u[i][j] += 0.2 * (x + y);
             //this->u[i][j] = abs(x) + 1.0;
             this->v[i][j] = 0;
