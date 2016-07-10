@@ -2,6 +2,9 @@
 #define WATER_OBJECT_H
 
 #include <math.h>
+#include <stdio.h>
+
+#include "maths/maths.h"
 
 namespace object3d {
 
@@ -13,6 +16,7 @@ namespace object3d {
             float u[width][height]; 
             float u_new[width][height]; 
             float v[width][height]; 
+            float control_point_heights[width][height];
 
             water();
 

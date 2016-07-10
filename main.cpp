@@ -126,8 +126,8 @@ int main() {
         /*
          * Continuous Drawing
          */
-        for (int i = 0; i < water.width / 3; i++) {
-            for (int j = 0; j < water.height / 3; j++) {
+        for (int i = 0; i < water.width / 3 - 1; i++) {
+            for (int j = 0; j < water.height / 3 - 1; j++) {
                 vec3 control_points[4][4];
 
                 for (int k = 0; k < 4; k++) {
@@ -135,7 +135,7 @@ int main() {
                         float x = -3 + 6 * (1 - ((3 * i + k) / (float) water.width));
                         float y = -3 + 6 * (1 - ((3 * j + l) / (float) water.height));
 
-                        control_points[k][l].set(x, y, water.u[3 * i + k][3 * j + l]);
+                        control_points[k][l].set(x, y, water.control_point_heights[3 * i + k][3 * j + l]);
                     }
                 }
 

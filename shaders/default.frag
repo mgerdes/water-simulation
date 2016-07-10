@@ -57,4 +57,5 @@ void main () {
     vec3 floor_texel = texture(floor_texture, floor_texture_coord).xyz;
     vec3 sky_texel = texture(sky_texture, sky_texture_coord).xyz;
     frag_color = vec4(kd * vec3(0.327, 0.543, 0.998) + floor_kd * 0.5 * floor_texel + sky_kd * 0.5 * sky_texel, 1.0);
+    //frag_color = vec4(normal, 1.0);
 }
