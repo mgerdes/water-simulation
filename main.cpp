@@ -1,6 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stdlib.h>
+#include <algorithm>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <vector>
@@ -19,8 +20,12 @@ int main() {
     vec3 cam_pos(5, 5, 5); 
     vec3 cam_targ(0, 0, -2);
     vec3 cam_up(0, 0, 1);
+
     mat4 view_mat = mat4::look_at(cam_pos, cam_targ, cam_up);
+    mat4 inv_view_mat = view_mat.inverse();
+
     mat4 proj_mat = mat4::perspective_projection(60, 1, 0.1, 100);
+    mat4 inv_proj_mat = proj_mat.inverse();
 
     graphics::shader shader("shaders/default.vert", "shaders/default.frag");
     graphics::shader floor_shader("shaders/floor.vert", "shaders/floor.frag");
@@ -43,6 +48,44 @@ int main() {
     float previous_time = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)) {
+        // Handle mouse clicks
+        {
+            static bool is_mouse_down = false;
+
+            double xpos, ypos;
+            glfwGetCursorPos(window, &xpos, &ypos);
+
+            vec3 mouse_world = inv_view_mat * inv_proj_mat * vec3((2.0 * xpos) / 1000.0 - 1.0, 1.0 - (2.0 * ypos) / 1000.0, 1.0);
+            mouse_world.make_unit_length();
+            vec3 mouse_intersection = cam_pos + (-cam_pos.z / mouse_world.z) * mouse_world;
+
+            int mouse_state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+            if (mouse_state == GLFW_PRESS && !is_mouse_down) {
+                is_mouse_down = true;
+
+                if (mouse_intersection.x > -3.0 &&
+                        mouse_intersection.x < 3.0 &&
+                        mouse_intersection.y > -3.0 &&
+                        mouse_intersection.y < 3.0) {
+                    int i = (-mouse_intersection.x + 3.0) / 6.0 * water.width;
+                    int j = (-mouse_intersection.y + 3.0) / 6.0 * water.height;
+
+                    water.u[i][j] = 1.0;
+                    water.u[i-1][j-1] = 0.5;
+                    water.u[i-1][j] = 0.5;
+                    water.u[i-1][j+1] = 0.5;
+                    water.u[i+1][j-1] = 0.5;
+                    water.u[i+1][j] = 0.5;
+                    water.u[i+1][j+1] = 0.5;
+                    water.u[i][j+1] = 0.5;
+                    water.u[i][j-1] = 0.5;
+                }
+            }
+            else if (mouse_state == GLFW_RELEASE && is_mouse_down) {
+                is_mouse_down = false;
+            }
+        }
+        
 
         float current_time = glfwGetTime();
         float elapsed_time = current_time - previous_time;
@@ -101,27 +144,27 @@ int main() {
          */
 
         /*
-        for (int i = 0; i < water.width; i++) {
-            for (int j = 0 ; j < water.height; j++) {
-                float x = -3 + 6 * (1 - (i / (float) water.width));
-                float y = -3 + 6 * (1 - (j / (float) water.height));
+           for (int i = 0; i < water.width; i++) {
+           for (int j = 0 ; j < water.height; j++) {
+           float x = -3 + 6 * (1 - (i / (float) water.width));
+           float y = -3 + 6 * (1 - (j / (float) water.height));
 
-                vec3 position(x, y, 0);
-                vec3 scale(1.0, 1.0, water.u[i][j]);
+           vec3 position(x, y, 0);
+           vec3 scale(1.0, 1.0, water.u[i][j]);
 
-                mat4 model_mat = mat4::translation(position) * mat4::scale(scale);
+           mat4 model_mat = mat4::translation(position) * mat4::scale(scale);
 
-                glUniform3f(shader.color_location, 0.527, 0.843, 0.898);
-                glUniformMatrix4fv(shader.model_mat_location, 1, GL_TRUE, model_mat.m);
-                glUniformMatrix4fv(shader.view_mat_location, 1, GL_TRUE, view_mat.m);
-                glUniformMatrix4fv(shader.proj_mat_location, 1, GL_TRUE, proj_mat.m);
+           glUniform3f(shader.color_location, 0.527, 0.843, 0.898);
+           glUniformMatrix4fv(shader.model_mat_location, 1, GL_TRUE, model_mat.m);
+           glUniformMatrix4fv(shader.view_mat_location, 1, GL_TRUE, view_mat.m);
+           glUniformMatrix4fv(shader.proj_mat_location, 1, GL_TRUE, proj_mat.m);
 
-                glBindVertexArray(rectangle.vao);
-                glDrawArrays(GL_TRIANGLES, 0, 36);
-                glBindVertexArray(0);
-            }
-        }
-        */
+           glBindVertexArray(rectangle.vao);
+           glDrawArrays(GL_TRIANGLES, 0, 36);
+           glBindVertexArray(0);
+           }
+           }
+           */
 
         /*
          * Continuous Drawing
