@@ -70,15 +70,17 @@ int main() {
                     int i = (-mouse_intersection.x + 3.0) / 6.0 * water.width;
                     int j = (-mouse_intersection.y + 3.0) / 6.0 * water.height;
 
-                    water.u[i][j] = 1.0;
-                    water.u[i-1][j-1] = 0.5;
-                    water.u[i-1][j] = 0.5;
-                    water.u[i-1][j+1] = 0.5;
-                    water.u[i+1][j-1] = 0.5;
-                    water.u[i+1][j] = 0.5;
-                    water.u[i+1][j+1] = 0.5;
-                    water.u[i][j+1] = 0.5;
-                    water.u[i][j-1] = 0.5;
+                    if (i > 0 && j > 0 && i < water.width - 1 && j < water.height - 1) { 
+                        water.u[i][j] = 1.0;
+                        water.u[i-1][j-1] = 0.5;
+                        water.u[i-1][j] = 0.5;
+                        water.u[i-1][j+1] = 0.5;
+                        water.u[i+1][j-1] = 0.5;
+                        water.u[i+1][j] = 0.5;
+                        water.u[i+1][j+1] = 0.5;
+                        water.u[i][j+1] = 0.5;
+                        water.u[i][j-1] = 0.5;
+                    }
                 }
             }
             else if (mouse_state == GLFW_RELEASE && is_mouse_down) {

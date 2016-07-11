@@ -8,7 +8,8 @@ water::water() {
             float x = -3 + 6 * (1 - (i / (float) this->width));
             float y = -3 + 6 * (1 - (j / (float) this->height));
 
-            if (x < 0.1 && x > -0.1 && y < 0.1 && y > -0.1) {
+
+            if (i > 42 && i < 48 && j > 42 && j < 48) {
                 this->u[i][j] = 1.0;
             }
             else {
