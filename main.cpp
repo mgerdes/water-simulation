@@ -10,7 +10,6 @@
 #include "maths/maths.h"
 #include "objects/rectangle.h"
 #include "objects/water.h"
-#include "objects/bezier_surface.h"
 #include "objects/plane.h"
 #include "shaders/shader.h"
 
@@ -32,7 +31,6 @@ int main() {
 
     object3d::rectangle rectangle(vec3(0, 0, 0), vec3(0, 0, 1));
     object3d::water water;
-    object3d::bezier_surface surface;
     object3d::plane plane;
 
     GLuint floor_texture = util_create_texture("floor.jpg");
@@ -67,18 +65,18 @@ int main() {
                         mouse_intersection.x < 3.0 &&
                         mouse_intersection.y > -3.0 &&
                         mouse_intersection.y < 3.0) {
-                    int i = (-mouse_intersection.x + 3.0) / 6.0 * water.width;
-                    int j = (-mouse_intersection.y + 3.0) / 6.0 * water.height;
+                    int i = (mouse_intersection.x + 3.0) / 6.0 * water.width;
+                    int j = (mouse_intersection.y + 3.0) / 6.0 * water.height;
 
                     if (i > 0 && j > 0 && i < water.width - 1 && j < water.height - 1) { 
-                        water.u[i][j] = 1.0;
-                        water.u[i-1][j-1] = 0.5;
-                        water.u[i-1][j] = 0.5;
-                        water.u[i-1][j+1] = 0.5;
-                        water.u[i+1][j-1] = 0.5;
-                        water.u[i+1][j] = 0.5;
-                        water.u[i+1][j+1] = 0.5;
-                        water.u[i][j+1] = 0.5;
+                        water.u[i][j] = 1.2;
+                        water.u[i-1][j-1] = 0.7;
+                        water.u[i-1][j] = 0.7;
+                        water.u[i-1][j+1] = 0.7;
+                        water.u[i+1][j-1] = 0.7;
+                        water.u[i+1][j] = 0.7;
+                        water.u[i+1][j+1] = 0.7;
+                        water.u[i][j+1] = 0.7;
                         water.u[i][j-1] = 0.5;
                     }
                 }
@@ -168,41 +166,27 @@ int main() {
            }
            */
 
+
         /*
          * Continuous Drawing
          */
-        for (int i = 0; i < water.width / 3 - 1; i++) {
-            for (int j = 0; j < water.height / 3 - 1; j++) {
-                vec3 control_points[4][4];
+        {   
+            // Set up uniforms for water surface
+            mat4 model_mat = mat4::identity();
+            glUniformMatrix4fv(shader.model_mat_location, 1, GL_TRUE, model_mat.m);
+            glUniformMatrix4fv(shader.view_mat_location, 1, GL_TRUE, view_mat.m);
+            glUniformMatrix4fv(shader.proj_mat_location, 1, GL_TRUE, proj_mat.m);
+            glUniform3f(shader.color_location, 0.527, 0.843, 0.898);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, floor_texture);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, sky_texture);
 
-                for (int k = 0; k < 4; k++) {
-                    for (int l = 0; l < 4; l++) {
-                        float x = -3 + 6 * (1 - ((3 * i + k) / (float) water.width));
-                        float y = -3 + 6 * (1 - ((3 * j + l) / (float) water.height));
-
-                        control_points[k][l].set(x, y, water.control_point_heights[3 * i + k][3 * j + l]);
-                    }
-                }
-
-                surface.update_control_points(control_points);
-
-                // Set up uniforms for water surface
-                mat4 model_mat = mat4::identity();
-                glUniformMatrix4fv(shader.model_mat_location, 1, GL_TRUE, model_mat.m);
-                glUniformMatrix4fv(shader.view_mat_location, 1, GL_TRUE, view_mat.m);
-                glUniformMatrix4fv(shader.proj_mat_location, 1, GL_TRUE, proj_mat.m);
-                glUniform3f(shader.color_location, 0.527, 0.843, 0.898);
-                glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, floor_texture);
-                glActiveTexture(GL_TEXTURE1);
-                glBindTexture(GL_TEXTURE_2D, sky_texture);
-
-                // Draw the surface
-                glBindVertexArray(surface.vao);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, surface.elements_vbo);
-                glDrawElements(GL_TRIANGLES, (surface.N - 1) * (surface.N - 1) * 2 * 3, GL_UNSIGNED_INT, 0);
-                glBindVertexArray(0);
-            }
+            // Draw the water surface
+            glBindVertexArray(water.vao);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, water.elements_vbo);
+            glDrawElements(GL_TRIANGLES, (water.N - 1) * (water.N - 1) * 2 * 3, GL_UNSIGNED_INT, 0);
+            glBindVertexArray(0);
         }
 
         glUseProgram(0);
