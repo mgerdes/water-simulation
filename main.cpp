@@ -46,6 +46,12 @@ int main() {
     float previous_time = glfwGetTime();
 
     while (!glfwWindowShouldClose(window)) {
+        int width, height;
+        glfwGetFramebufferSize(window, &width, &height);
+        glViewport(0, 0, width, height);
+        proj_mat = mat4::perspective_projection(60, width / (float) height, 0.1, 100);
+        inv_proj_mat = proj_mat.inverse();
+
         // Handle mouse clicks
         {
             static bool is_mouse_down = false;
@@ -53,7 +59,7 @@ int main() {
             double xpos, ypos;
             glfwGetCursorPos(window, &xpos, &ypos);
 
-            vec3 mouse_world = inv_view_mat * inv_proj_mat * vec3((2.0 * xpos) / 1000.0 - 1.0, 1.0 - (2.0 * ypos) / 1000.0, 1.0);
+            vec3 mouse_world = inv_view_mat * inv_proj_mat * vec3((2.0 * xpos) / width - 1.0, 1.0 - (2.0 * ypos) / height, 1.0);
             mouse_world.make_unit_length();
             vec3 mouse_intersection = cam_pos + (-cam_pos.z / mouse_world.z) * mouse_world;
 
@@ -85,7 +91,7 @@ int main() {
                 is_mouse_down = false;
             }
         }
-        
+
 
         float current_time = glfwGetTime();
         float elapsed_time = current_time - previous_time;

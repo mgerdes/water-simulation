@@ -16,7 +16,7 @@ water::water() {
             float y = -3 + 6 * (1 - (j / (float) this->height));
 
 
-            if (i > 42 && i < 48 && j > 42 && j < 48) {
+            if (i > 28 && i < 32 && j > 28 && j < 32) {
                 this->u[i][j] = 0.7;
             }
             else {
