@@ -65,8 +65,23 @@ int main() {
 
     float previous_time = glfwGetTime();
 
+    bool is_drawing_continous = true; 
+    bool is_c_key_down = false;
+
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        /*
+         * Check if c key was pressed and invert whether we are drawing continuously
+         */
+        int c_key_state = glfwGetKey(window, GLFW_KEY_C);
+        if (c_key_state == GLFW_PRESS && !is_c_key_down) {
+            is_c_key_down = true;
+            is_drawing_continous = !is_drawing_continous;
+        }
+        if (c_key_state == GLFW_RELEASE) {
+            is_c_key_down = false;
+        }
 
         /*
          * Figure out how long the last frame was.
@@ -175,8 +190,7 @@ int main() {
         /*
          * Draw a discrete representation of the water surface
          */
-        /*
-        {
+        if (!is_drawing_continous) {
             glUseProgram(rectangle_shader.program);
 
             for (int i = 0; i < water_surface.width; i++) {
@@ -202,13 +216,12 @@ int main() {
 
             glUseProgram(0);
         }
-        */
 
 
         /*
          * Draw a continous representation of the water surface
          */
-        {   
+        if (is_drawing_continous) {   
             glUseProgram(surface_shader.program);
 
             // Set up uniforms for water surface
