@@ -1,8 +1,8 @@
-#include "objects/water.h"
+#include "objects/water_surface.h"
 
 using namespace object3d;
 
-water::water() {
+water_surface::water_surface() {
     // Set up the VAO and VBOS
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &elements_vbo);
@@ -31,7 +31,7 @@ water::water() {
 /*
  * From here: http://matthias-mueller-fischer.ch/talks/GDC2008.pdf
  */
-void water::update(float dt) {
+void water_surface::update(float dt) {
     for (int i = 0; i < this->width; i++) {
         for (int j = 0; j < this->height; j++) {
             float v1, v2, v3, v4;

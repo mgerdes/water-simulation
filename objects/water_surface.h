@@ -9,7 +9,7 @@
 
 namespace object3d {
 
-    class water {
+    class water_surface {
         private:
             GLuint points_vbo, normals_vbo;
 
@@ -33,7 +33,7 @@ namespace object3d {
             float normals_buffer[N * N * 3];
             int elements_buffer[(N - 1) * (N - 1) * 2 * 3];
 
-            water();
+            water_surface();
 
             void update(float dt);
     };
